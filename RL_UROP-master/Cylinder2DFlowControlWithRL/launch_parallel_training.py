@@ -37,7 +37,7 @@ if __name__ == '__main__':
 
     config = {}
 
-    config["learning_rate"] = 1e-4
+    config["learning_rate"] = 3e-4
     config["learning_starts"] = 0
     config["batch_size"] = 128
 
@@ -59,13 +59,14 @@ if __name__ == '__main__':
                                             #save_buffer=True,
                                             #save_env_stats=True,
                                             save_path=savedir,
-                                            name_prefix='TQC4SP30FS_model')
+                                            name_prefix='SACSO_model')
 
 
     env = SubprocVecEnv([resume_env(nb_actuations,i) for i in range(number_servers)], start_method='spawn')
     env = VecFrameStack(env, n_stack=35)
-    model = TQC('MlpPolicy', VecNormalize(env, gamma=0.99), tensorboard_log=savedir, **config)
+    model = SAC('MlpPolicy', VecNormalize(env,gamma=0.99), policy_kwargs=policy_kwargs, tensorboard_log=savedir, **config)
     model.learn(15000000, callback=[checkpoint_callback], log_interval=1)
+
 
    
 
